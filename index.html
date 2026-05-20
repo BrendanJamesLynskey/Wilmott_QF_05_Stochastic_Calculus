@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wilmott QF 05 &mdash; Elementary Stochastic Calculus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0a; --bg-card: #0d1117; --bg-code: #161b22;
+            --text-primary: #e6edf3; --text-secondary: #8b949e;
+            --accent: #fbbf24; --accent-dim: #fbbf2444; --accent-glow: #fbbf2433;
+            --accent-2: #f472b6; --accent-3: #a78bfa; --accent-4: #34d399;
+            --accent-5: #60a5fa;
+            --border: #21262d;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --font-body: 'Inter', sans-serif;
+            --max-width: 900px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 17px; line-height: 1.7; overflow-x: hidden; }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem 1.5rem; text-align: center; position: relative; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 700px; height: 600px; background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+        .hero > * { position: relative; z-index: 1; }
+        .series-label { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+        .hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; color: var(--text-primary); line-height: 1.2; margin-bottom: 1rem; }
+        .hero h1 .accent { color: var(--accent); }
+        .hero .subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 640px; margin-bottom: 2rem; }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2.5rem; }
+        .tag { font-family: var(--font-mono); font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-dim); white-space: nowrap; }
+        .pipeline { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 1rem; max-width: var(--max-width); }
+        .pipeline-step { font-family: var(--font-mono); font-size: 0.7rem; padding: 0.3rem 0.7rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); white-space: nowrap; }
+        .pipeline-arrow { color: var(--accent); font-size: 0.9rem; font-weight: 700; }
+        .slide { min-height: 100vh; max-width: var(--max-width); margin: 0 auto; padding: 4rem 1.5rem; position: relative; display: flex; flex-direction: column; justify-content: center; }
+        .slide-number { font-family: var(--font-display); font-size: 5rem; font-weight: 700; color: var(--accent-dim); position: absolute; top: 2rem; right: 1.5rem; line-height: 1; user-select: none; }
+        .slide h2 { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; line-height: 1.25; }
+        .slide h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--text-primary); margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .slide p { margin-bottom: 1rem; color: var(--text-secondary); }
+        .slide p strong { color: var(--text-primary); }
+        .slide ul, .slide ol { margin-bottom: 1rem; padding-left: 1.5rem; color: var(--text-secondary); }
+        .slide li { margin-bottom: 0.4rem; }
+        .slide li strong { color: var(--text-primary); }
+        .slide code { background: var(--bg-code); padding: 0.1rem 0.35rem; border-radius: 3px; font-family: var(--font-mono); font-size: 0.85em; color: var(--accent); }
+        .diagram-grid { display: grid; gap: 0.75rem; margin: 1.5rem 0; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; }
+        .diagram-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+        .diagram-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .diagram-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        .diagram-panel { padding: 1rem; background: var(--bg-code); border: 1px solid var(--border); border-radius: 6px; }
+        .diagram-panel.accent-border { border-left: 3px solid var(--accent); }
+        .diagram-panel.r { border-left: 3px solid var(--accent-2); }
+        .diagram-panel.p { border-left: 3px solid var(--accent-3); }
+        .diagram-panel.g { border-left: 3px solid var(--accent-4); }
+        .diagram-panel.b { border-left: 3px solid var(--accent-5); }
+        .diagram-panel h4 { font-family: var(--font-display); font-size: 1rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .diagram-panel.r h4 { color: var(--accent-2); }
+        .diagram-panel.p h4 { color: var(--accent-3); }
+        .diagram-panel.g h4 { color: var(--accent-4); }
+        .diagram-panel.b h4 { color: var(--accent-5); }
+        .diagram-panel p, .diagram-panel ul { font-size: 0.9rem; }
+        .callout { background: var(--bg-card); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 1.25rem 0; }
+        .callout p { margin-bottom: 0; }
+        .callout .callout-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+        .quote { font-family: var(--font-display); font-size: 1.1rem; font-style: italic; color: var(--text-primary); padding: 1rem 1.5rem; border-left: 3px solid var(--accent); background: var(--bg-card); margin: 1.25rem 0; border-radius: 0 8px 8px 0; }
+        .quote .attr { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-mono); }
+        .canvas-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin: 1.25rem 0; overflow-x: auto; }
+        .canvas-wrap canvas, .canvas-wrap svg { display: block; margin: 0 auto; max-width: 100%; }
+        .control-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1.25rem 0; }
+        .control-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .control-row label { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); min-width: 160px; }
+        .control-row input[type="range"] { flex: 1; min-width: 150px; accent-color: var(--accent); }
+        .control-row select, .control-row input[type="number"] { background: var(--bg-code); border: 1px solid var(--border); color: var(--text-primary); border-radius: 4px; padding: 0.3rem 0.5rem; font-family: var(--font-mono); font-size: 0.8rem; }
+        .control-row .val { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); min-width: 80px; text-align: right; }
+        .btn { font-family: var(--font-mono); font-size: 0.8rem; padding: 0.4rem 0.9rem; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; cursor: pointer; transition: background 0.15s ease; }
+        .btn:hover { background: rgba(251,191,36,0.25); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn.secondary { background: var(--bg-code); color: var(--text-secondary); border-color: var(--border); }
+        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin-top: 0.75rem; }
+        .metric { background: var(--bg-code); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.8rem; text-align: center; }
+        .metric .metric-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+        .metric .metric-value { font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); font-weight: 600; margin-top: 0.2rem; }
+        .contents-list { list-style: none; padding-left: 0; counter-reset: contents; }
+        .contents-list li { counter-increment: contents; padding: 0.6rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
+        .contents-list li:last-child { border-bottom: none; }
+        .contents-list li::before { content: counter(contents, decimal-leading-zero); font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); min-width: 2rem; }
+        .contents-list a { color: var(--text-primary); text-decoration: none; }
+        .contents-list a:hover { color: var(--accent); }
+        .footer { text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); max-width: var(--max-width); margin: 0 auto; }
+        .footer a { color: var(--accent); text-decoration: none; }
+        .katex { color: var(--text-primary); }
+        .katex-display { margin: 1rem 0; overflow-x: auto; overflow-y: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 1rem 0; }
+        th { background: var(--bg-code); color: var(--accent); font-weight: 600; text-align: left; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border); font-family: var(--font-display); }
+        td { padding: 0.5rem 0.85rem; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) td { background: rgba(13, 17, 23, 0.5); }
+        @media (max-width: 640px) {
+            .slide { padding: 3rem 1rem; min-height: auto; }
+            .slide-number { font-size: 3rem; top: 1.5rem; right: 1rem; }
+            .slide h2 { font-size: 1.5rem; }
+            .diagram-grid.cols-2, .diagram-grid.cols-3, .diagram-grid.cols-4 { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="series-label">Paul Wilmott Introduces Quantitative Finance &mdash; Deck 05</div>
+    <h1>Elementary <span class="accent">Stochastic Calculus</span></h1>
+    <p class="subtitle">Brownian motion, quadratic variation, the It&ocirc; integral, SDEs and It&ocirc;'s lemma &mdash; the machinery you need before Black&ndash;Scholes makes sense.</p>
+
+    <div class="tags">
+        <span class="tag">Brownian motion</span><span class="tag">martingale</span>
+        <span class="tag">Markov</span><span class="tag">quadratic variation</span>
+        <span class="tag">It&ocirc; integral</span><span class="tag">SDE</span>
+        <span class="tag">It&ocirc;'s lemma</span><span class="tag">lognormal walk</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">$W_t$</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">$(dW)^2 = dt$</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">$\int X\,dW$</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">$dX = a\,dt + b\,dW$</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">It&ocirc;'s lemma</span>
+    </div>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <ul class="contents-list">
+        <li><a href="#slide-01">Why a new calculus</a></li>
+        <li><a href="#slide-02">Markov and martingale</a></li>
+        <li><a href="#slide-03">Quadratic variation &mdash; $(dW)^2 = dt$</a></li>
+        <li><a href="#slide-04">Brownian motion $W_t$</a></li>
+        <li><a href="#slide-05">Stochastic integration &mdash; the It&ocirc; integral</a></li>
+        <li><a href="#slide-06">Stochastic differential equations</a></li>
+        <li><a href="#slide-07">It&ocirc;'s lemma</a></li>
+        <li><a href="#slide-08">It&ocirc; vs Taylor &mdash; the extra term</a></li>
+        <li><a href="#slide-09">Worked examples: BM with drift, lognormal walk, OU</a></li>
+        <li><a href="#slide-10">Interactive: Brownian path and quadratic variation</a></li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>Why a New Calculus</h2>
+    <p>The objects that move financial models &mdash; share prices, exchange rates, interest rates &mdash; are not smooth. Sampled at any frequency, they look jagged; sampled finer, they look <em>just as</em> jagged. Classical calculus assumes you can write $df = f'(x)\,dx$ and let $dx \to 0$. For Brownian-driven paths that limit doesn't exist in the ordinary sense.</p>
+
+    <div class="quote">
+        <p>"The most important difference between deterministic and stochastic calculus is the appearance of the second-derivative term in It&ocirc;'s lemma."</p>
+        <span class="attr">&mdash; Wilmott, Ch. 5</span>
+    </div>
+
+    <p>The fundamental obstruction is that the sample paths of Brownian motion have <strong>unbounded variation</strong>: between any two times $0 \le s < t$, the total length traced out by the path is infinite. So $\int f(W_s)\,dW_s$ cannot be defined path-by-path as a Riemann&ndash;Stieltjes integral. We need a new definition &mdash; the It&ocirc; integral &mdash; and once we have it the consequence is the extra second-derivative term in It&ocirc;'s lemma.</p>
+
+    <div class="callout">
+        <div class="callout-label">What we'll take for granted</div>
+        <p>Brownian motion exists, has continuous paths, and is the limit of a simple random walk under a particular scaling. The book proves none of this rigorously; nor will this deck. What matters is the algebra of $(dW)^2 = dt$ and the consequences for derivative pricing.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>Markov and Martingale</h2>
+    <p>Two properties dominate the kinds of processes Wilmott uses for share prices.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Markov property</h4>
+            <p>The future depends on the past only through the present.</p>
+            <p>$$\mathbb{E}[\,f(X_t)\mid \mathcal{F}_s\,] = \mathbb{E}[\,f(X_t)\mid X_s\,], \quad s < t.$$</p>
+            <p>For modelling, this is the assumption that "today's price contains all relevant information." It is the working assumption behind technical analysis being a waste of time.</p>
+        </div>
+        <div class="diagram-panel g">
+            <h4>Martingale property</h4>
+            <p>The best forecast of the future value is the current value.</p>
+            <p>$$\mathbb{E}[\,X_t \mid \mathcal{F}_s\,] = X_s, \quad s < t.$$</p>
+            <p>Real share prices are <em>not</em> martingales (they have drift). But under a clever change of measure (Deck 06) the <em>discounted</em> price becomes one &mdash; the riskneutral pricing principle.</p>
+        </div>
+    </div>
+
+    <p>Brownian motion $W_t$ is both Markov and a martingale. So is $W_t^2 - t$. So is $e^{\sigma W_t - \tfrac{1}{2}\sigma^2 t}$ (the exponential martingale, the workhorse of Girsanov's theorem). These will come up repeatedly.</p>
+
+    <div class="callout">
+        <div class="callout-label">Why "fair game"</div>
+        <p>If $X$ is a martingale and you bet on it, your expected wealth is constant: you can't make money in expectation by trading a martingale. Risk-neutral pricing turns derivative valuation into the calculation of the expected payoff of an artificially constructed martingale.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>Quadratic Variation &mdash; the heuristic $(dW)^2 = dt$</h2>
+    <p>Partition $[0,T]$ into $N$ equal pieces of width $\delta t = T/N$. Let $\Delta W_k = W_{t_k} - W_{t_{k-1}}$. The <strong>quadratic variation</strong> of the path is</p>
+    <p>$$Q_N(T) = \sum_{k=1}^{N} (\Delta W_k)^2.$$</p>
+
+    <p>Each $\Delta W_k$ is normal with mean zero and variance $\delta t$, so $\mathbb{E}[(\Delta W_k)^2] = \delta t$ and $\mathrm{Var}[(\Delta W_k)^2] = 2(\delta t)^2$. Summing over $N$ terms:</p>
+    <p>$$\mathbb{E}[Q_N(T)] = T, \qquad \mathrm{Var}[Q_N(T)] = 2T\,\delta t \;\to\; 0.$$</p>
+
+    <p>So $Q_N(T) \to T$ in mean square as $N \to \infty$. The crucial point is that the limit is <em>deterministic</em> &mdash; even though every $\Delta W_k$ is random.</p>
+
+    <div class="callout">
+        <div class="callout-label">The heuristic</div>
+        <p>We summarise this as $\;(dW)^2 = dt\;$ &mdash; an identity that doesn't quite make sense pathwise but is the right book-keeping for every It&ocirc;-calculus calculation. Anywhere a $(dW)^2$ appears in a Taylor expansion you may replace it by $dt$. Higher powers ($dW^3, dW\,dt, dt^2$) vanish.</p>
+    </div>
+
+    <h3>Multiplication table</h3>
+    <table>
+        <thead><tr><th>&times;</th><th>$dt$</th><th>$dW$</th></tr></thead>
+        <tbody>
+            <tr><td>$dt$</td><td>$0$</td><td>$0$</td></tr>
+            <tr><td>$dW$</td><td>$0$</td><td>$dt$</td></tr>
+        </tbody>
+    </table>
+    <p>This is the single fact that distinguishes It&ocirc; calculus from Newton&ndash;Leibniz.</p>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>Brownian Motion $W_t$</h2>
+    <p>The hero of the chapter. <strong>Standard Brownian motion</strong> (a.k.a. the Wiener process) is the unique stochastic process $W_t$ satisfying:</p>
+
+    <div class="diagram-grid cols-3">
+        <div class="diagram-panel accent-border">
+            <h4>1. Continuity</h4>
+            <p>$t \mapsto W_t$ is almost surely continuous, with $W_0 = 0$.</p>
+        </div>
+        <div class="diagram-panel p">
+            <h4>2. Gaussian increments</h4>
+            <p>$W_t - W_s \sim \mathcal{N}(0, t-s)$ for all $s < t$.</p>
+        </div>
+        <div class="diagram-panel g">
+            <h4>3. Independent increments</h4>
+            <p>For $0 \le t_1 < t_2 < t_3 < t_4$ the increments $W_{t_2}-W_{t_1}$ and $W_{t_4}-W_{t_3}$ are independent.</p>
+        </div>
+    </div>
+
+    <h3>Sample-path roughness</h3>
+    <p>From these three axioms a great deal follows. The paths are nowhere differentiable (almost surely). They have infinite total variation on every interval. They achieve every real value infinitely often. They are self-similar: $W_{ct} \stackrel{d}{=} \sqrt{c}\,W_t$.</p>
+
+    <p>Heuristically a typical increment over $\delta t$ has size $\sqrt{\delta t}$, not $\delta t$. That mismatch is exactly why $(\Delta W)^2 / \delta t \to 1$ and is the seed of every stochastic-calculus subtlety.</p>
+
+    <div class="callout">
+        <div class="callout-label">Numerical recipe</div>
+        <p>To simulate a path on $[0,T]$ with $N$ steps: draw $Z_k \sim \mathcal{N}(0,1)$ i.i.d., set $\Delta W_k = \sqrt{\delta t}\,Z_k$, then $W_{t_k} = \sum_{j \le k}\Delta W_j$. The interactive widget on slide 10 does exactly this.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>Stochastic Integration &mdash; the It&ocirc; Integral</h2>
+    <p>For a smooth function $f$ and a smooth path $g$ the Riemann&ndash;Stieltjes integral $\int_0^T f\,dg$ is defined by partition sums. That definition fails for $g = W$, because $W$ has unbounded variation.</p>
+
+    <p>It&ocirc;'s fix: <strong>fix the evaluation point of the integrand to the <em>left</em> endpoint</strong> of each partition cell. Define</p>
+    <p>$$\int_0^T X_s\, dW_s \;:=\; \lim_{N \to \infty} \sum_{k=1}^{N} X_{t_{k-1}}\,(W_{t_k} - W_{t_{k-1}})$$</p>
+    <p>where convergence is in mean-square. The choice of left endpoint is essential: it makes the integral a martingale and respects the non-anticipating nature of finance &mdash; you decide how much stock to hold at $t_{k-1}$ <em>before</em> you see the move $\Delta W_k$.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel b">
+            <h4>It&ocirc; isometry</h4>
+            <p>$$\mathbb{E}\!\left[\,\Big(\int_0^T X_s\,dW_s\Big)^{\!2}\,\right] = \mathbb{E}\!\left[\,\int_0^T X_s^2\,ds\,\right]$$</p>
+            <p>The "variance of the integral equals the integral of the variance." This is the only formula you need to compute second moments.</p>
+        </div>
+        <div class="diagram-panel g">
+            <h4>Martingale property</h4>
+            <p>If $X$ is reasonable (square-integrable, adapted), then</p>
+            <p>$$M_t = \int_0^t X_s\,dW_s$$</p>
+            <p>is a martingale with $\mathbb{E}[M_t] = 0$.</p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">A different convention &mdash; Stratonovich</div>
+        <p>Evaluating the integrand at the midpoint instead of the left gives the <strong>Stratonovich integral</strong>, denoted $\int X \circ dW$. It obeys ordinary calculus &mdash; no second-derivative term &mdash; but loses the martingale property. Finance uses It&ocirc;.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Stochastic Differential Equations</h2>
+    <p>The shorthand</p>
+    <p>$$dX_t \;=\; a(X_t, t)\,dt \;+\; b(X_t, t)\,dW_t$$</p>
+    <p>is precisely the integral equation</p>
+    <p>$$X_t \;=\; X_0 + \int_0^t a(X_s, s)\,ds + \int_0^t b(X_s, s)\,dW_s.$$</p>
+    <p>The first integral is an ordinary Riemann integral; the second is an It&ocirc; integral. The function $a$ is the <strong>drift</strong>, $b$ is the <strong>diffusion coefficient</strong> (sometimes called the volatility).</p>
+
+    <h3>The canonical zoo</h3>
+    <table>
+        <thead><tr><th>Process</th><th>SDE</th><th>Used for</th></tr></thead>
+        <tbody>
+            <tr><td>BM with drift</td><td>$dX = \mu\,dt + \sigma\,dW$</td><td>arithmetic walks; toy models</td></tr>
+            <tr><td>Geometric BM</td><td>$dS = \mu S\,dt + \sigma S\,dW$</td><td>share prices; Black&ndash;Scholes</td></tr>
+            <tr><td>Ornstein&ndash;Uhlenbeck</td><td>$dX = -\theta X\,dt + \sigma\,dW$</td><td>mean-reverting rates</td></tr>
+            <tr><td>Cox&ndash;Ingersoll&ndash;Ross</td><td>$dr = \kappa(\theta-r)\,dt + \sigma\sqrt{r}\,dW$</td><td>short rate (positive)</td></tr>
+        </tbody>
+    </table>
+
+    <div class="callout">
+        <div class="callout-label">Existence and uniqueness (briefly)</div>
+        <p>If $a$ and $b$ are Lipschitz in $X$ and grow at most linearly, the SDE has a unique strong solution. The book skips proofs; we should know they exist for the cases above.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>It&ocirc;'s Lemma</h2>
+    <p>The fundamental theorem of the chapter. Suppose $X_t$ satisfies $dX = a\,dt + b\,dW$, and $f(x,t)$ is twice differentiable in $x$ and once in $t$. Then</p>
+
+    <p>$$\boxed{\; df \;=\; \Big(f_t + a\,f_x + \tfrac{1}{2}\,b^2\,f_{xx}\Big)\,dt \;+\; b\,f_x\,dW \;}$$</p>
+
+    <p>The shape is the same as the deterministic chain rule, except for the new $\tfrac{1}{2} b^2 f_{xx}$ piece in the drift &mdash; the <em>It&ocirc; correction</em>.</p>
+
+    <h3>Where the extra term comes from</h3>
+    <p>Taylor-expand $f(X_{t+dt}, t+dt) - f(X_t, t)$ to second order:</p>
+    <p>$$df = f_t\,dt + f_x\,dX + \tfrac{1}{2}f_{xx}(dX)^2 + \cdots$$</p>
+    <p>and use $dX = a\,dt + b\,dW$ together with the multiplication table $(dW)^2 = dt$, $dt\,dW = 0$, $(dt)^2 = 0$:</p>
+    <p>$$(dX)^2 = b^2 (dW)^2 + 2ab\,dt\,dW + a^2 (dt)^2 = b^2\,dt.$$</p>
+    <p>The $(dX)^2$ term, which Newton would throw away as "second order," now contributes a first-order $dt$ piece. That's the entire story.</p>
+
+    <div class="callout">
+        <div class="callout-label">The version you actually use</div>
+        <p>For Black&ndash;Scholes, $S$ is geometric BM ($a = \mu S$, $b = \sigma S$) and $V$ is a function of $S$ and $t$. Then $dV = (V_t + \mu S V_S + \tfrac{1}{2}\sigma^2 S^2 V_{SS})\,dt + \sigma S\,V_S\,dW$ &mdash; this is the formula Wilmott applies to derive the BS PDE in chapter 6.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>It&ocirc; vs Taylor &mdash; Keeping the Second-order Term</h2>
+    <p>Side by side, deterministic and stochastic chain rules:</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel g">
+            <h4>Deterministic (Newton/Leibniz)</h4>
+            <p>If $x(t)$ is smooth, $f = f(x,t)$:</p>
+            <p>$$df = f_t\,dt + f_x\,\dot x\,dt.$$</p>
+            <p>The Taylor expansion has only first-order terms. $(dx)^2 \sim (dt)^2$, which is negligible.</p>
+        </div>
+        <div class="diagram-panel r">
+            <h4>Stochastic (It&ocirc;)</h4>
+            <p>If $dX = a\,dt + b\,dW$:</p>
+            <p>$$df = (f_t + a f_x + \tfrac{1}{2} b^2 f_{xx})\,dt + b\,f_x\,dW.$$</p>
+            <p>The Taylor expansion <em>must</em> include the $f_{xx}(dX)^2$ piece. $(dW)^2 \sim dt$ is <em>not</em> negligible.</p>
+        </div>
+    </div>
+
+    <h3>A worked check</h3>
+    <p>Let $f(x) = x^2$ and $X_t = W_t$. Then $df = 2W_t\,dW_t + dt$. Integrate:</p>
+    <p>$$W_T^2 = 2\int_0^T W_s\,dW_s + T.$$</p>
+    <p>Rearranging gives a useful identity that classical calculus would <em>never</em> produce:</p>
+    <p>$$\int_0^T W_s\,dW_s = \tfrac{1}{2} W_T^2 - \tfrac{1}{2}\,T.$$</p>
+    <p>The extra $-T/2$ is the It&ocirc; correction. It's also why $W_t^2 - t$ is a martingale (slide 02).</p>
+
+    <div class="callout">
+        <div class="callout-label">Operational rule of thumb</div>
+        <p>Whenever you expand a function of $W$ to second order, replace $(dW)^2$ by $dt$ and drop $dW\,dt$ and $(dt)^2$. Then re-collect into $dt$ and $dW$ parts. That's It&ocirc;'s lemma in one sentence.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Worked Examples</h2>
+    <p>Three SDEs that recur in the rest of the book, each solved by an application of It&ocirc;'s lemma.</p>
+
+    <h3>1. Brownian motion with drift</h3>
+    <p>$dX = \mu\,dt + \sigma\,dW \implies X_t = X_0 + \mu t + \sigma W_t$. Gaussian at every $t$, with $\mathbb{E}[X_t] = X_0 + \mu t$ and $\mathrm{Var}[X_t] = \sigma^2 t$. Can go negative &mdash; <em>not</em> a stock-price model.</p>
+
+    <h3>2. The lognormal random walk (Geometric BM)</h3>
+    <p>$dS = \mu S\,dt + \sigma S\,dW$. Apply It&ocirc; to $f = \log S$ ($f_S = 1/S$, $f_{SS} = -1/S^2$, $f_t = 0$):</p>
+    <p>$$d(\log S) = \Big(\mu - \tfrac{1}{2}\sigma^2\Big)\,dt + \sigma\,dW.$$</p>
+    <p>So $\log S_t$ is Brownian motion with drift, hence Gaussian. Exponentiating:</p>
+    <p>$$S_t = S_0\,\exp\!\Big(\,(\mu - \tfrac{1}{2}\sigma^2) t + \sigma W_t\,\Big).$$</p>
+    <p>Always positive. $\mathbb{E}[S_t] = S_0 e^{\mu t}$ (the $-\tfrac{1}{2}\sigma^2$ is absorbed). This is the model Black&ndash;Scholes uses.</p>
+
+    <h3>3. Ornstein&ndash;Uhlenbeck (mean reversion)</h3>
+    <p>$dX = -\theta(X - \mu)\,dt + \sigma\,dW$. The drift pulls $X$ back toward $\mu$ at rate $\theta$. Closed form via integrating factor $e^{\theta t}$:</p>
+    <p>$$X_t = \mu + (X_0 - \mu)\,e^{-\theta t} + \sigma\int_0^t e^{-\theta(t-s)}\,dW_s.$$</p>
+    <p>Gaussian, with stationary variance $\sigma^2/(2\theta)$ as $t \to \infty$. Used for short rates (Vasicek) and for any quantity that "knows its own equilibrium."</p>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>Interactive: Brownian Path &amp; Quadratic Variation</h2>
+    <p>Slide $T$ and the partition size $N$. The left panel plots a sample path of $W_t$; the middle panel plots the running quadratic variation $Q_t = \sum_{k\le t/\delta t}(\Delta W_k)^2$ together with the deterministic limit line $y=t$; the right panel is a histogram of $\Delta W_k$ over the path, with the theoretical $\mathcal{N}(0,\delta t)$ density overlaid.</p>
+
+    <div class="canvas-wrap">
+        <canvas id="bm-canvas" width="840" height="320"></canvas>
+    </div>
+
+    <div class="control-panel">
+        <div class="control-row">
+            <label for="T-slider">Horizon $T$</label>
+            <input type="range" id="T-slider" min="0.25" max="4" step="0.05" value="1">
+            <span class="val" id="T-val">1.00</span>
+        </div>
+        <div class="control-row">
+            <label for="N-slider">Steps $N$ (log)</label>
+            <input type="range" id="N-slider" min="5" max="13" step="1" value="9">
+            <span class="val" id="N-val">512</span>
+        </div>
+        <div class="control-row">
+            <label>&nbsp;</label>
+            <button class="btn" id="resample-btn">Resample path</button>
+            <span class="val" style="min-width:0;flex:1;text-align:left;">&nbsp;</span>
+        </div>
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">Empirical $\sum(\Delta W)^2$</div><div class="metric-value" id="m-Q">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Theoretical $T$</div><div class="metric-value" id="m-T">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">$\delta t$</div><div class="metric-value" id="m-dt">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">$\max|\Delta W|$</div><div class="metric-value" id="m-max">&mdash;</div></div>
+        </div>
+    </div>
+
+    <p>Push $N$ up: the empirical sum tightens around $T$, even as the path you're sampling has rougher and rougher visual texture. That's the quadratic variation theorem in motion &mdash; the path becomes more wiggly but its quadratic content settles to $T$. Resample with the button to see how stable the limit is despite path-by-path randomness.</p>
+</section>
+
+<footer class="footer">
+    <p>Deck 05 of the <a href="https://github.com/BrendanJamesLynskey/Wilmott_QF_Hub">Paul Wilmott Introduces Quantitative Finance &mdash; Companion Series</a>.</p>
+    <p style="margin-top: 0.6rem;">Companion to chapter 5 of <em>Paul Wilmott Introduces Quantitative Finance</em>, 2nd edition (Wiley, 2007).</p>
+</footer>
+
+<script>
+(function() {
+    const $ = id => document.getElementById(id);
+    const sT = $('T-slider'), sN = $('N-slider');
+    const vT = $('T-val'),    vN = $('N-val');
+    const mQ = $('m-Q'), mT = $('m-T'), mDt = $('m-dt'), mMax = $('m-max');
+    const btn = $('resample-btn');
+    const canvas = $('bm-canvas'), ctx = canvas.getContext('2d');
+
+    // Persistent normal draws so that path is stable across T changes (only N regenerates / resample regenerates)
+    let normals = [];
+    function gauss() {
+        // Box-Muller
+        let u = 0, v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    function regenerate() {
+        const N = 1 << +sN.value;
+        normals = new Array(N);
+        for (let i = 0; i < N; i++) normals[i] = gauss();
+    }
+
+    function fmt(x, dp) { return x.toFixed(dp == null ? 3 : dp); }
+
+    function draw() {
+        const T = +sT.value;
+        const N = 1 << +sN.value;
+        // resize draws if N changed
+        if (normals.length !== N) regenerate();
+        const dt = T / N;
+        const sdt = Math.sqrt(dt);
+
+        // Build path
+        const W = new Float64Array(N + 1);
+        const dW = new Float64Array(N);
+        for (let k = 0; k < N; k++) {
+            dW[k] = sdt * normals[k];
+            W[k + 1] = W[k] + dW[k];
+        }
+        // Running quadratic variation
+        const Q = new Float64Array(N + 1);
+        for (let k = 0; k < N; k++) Q[k + 1] = Q[k] + dW[k] * dW[k];
+        const totalQ = Q[N];
+        let maxAbsDW = 0;
+        for (let k = 0; k < N; k++) if (Math.abs(dW[k]) > maxAbsDW) maxAbsDW = Math.abs(dW[k]);
+
+        vT.textContent = fmt(T, 2);
+        vN.textContent = String(N);
+        mQ.textContent = fmt(totalQ);
+        mT.textContent = fmt(T);
+        mDt.textContent = fmt(dt, 5);
+        mMax.textContent = fmt(maxAbsDW);
+
+        // Layout: three panels side by side
+        const Wc = canvas.width, Hc = canvas.height;
+        ctx.clearRect(0, 0, Wc, Hc);
+        const pad = 8;
+        const panelW = (Wc - 4 * pad) / 3;
+        const panelH = Hc - 2 * pad - 20;
+        const panelY = pad + 16;
+
+        // Panel titles
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '12px JetBrains Mono';
+        ctx.fillText('Brownian path  W_t', pad + 4, pad + 12);
+        ctx.fillStyle = '#34d399';
+        ctx.fillText('Quadratic variation', pad * 2 + panelW + 4, pad + 12);
+        ctx.fillStyle = '#a78bfa';
+        ctx.fillText('Histogram of dW', pad * 3 + 2 * panelW + 4, pad + 12);
+
+        // ---------- Panel 1: W_t ----------
+        const x0 = pad;
+        let wMin = 0, wMax = 0;
+        for (let k = 0; k <= N; k++) { if (W[k] < wMin) wMin = W[k]; if (W[k] > wMax) wMax = W[k]; }
+        const wRange = Math.max(wMax - wMin, 1e-9);
+        const wPad = 0.1 * wRange;
+        const yWmin = wMin - wPad, yWmax = wMax + wPad;
+
+        // axes
+        ctx.strokeStyle = '#21262d';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x0, panelY, panelW, panelH);
+        // y=0 line
+        const y0p1 = panelY + panelH - (0 - yWmin) / (yWmax - yWmin) * panelH;
+        ctx.strokeStyle = '#3a4252';
+        ctx.beginPath(); ctx.moveTo(x0, y0p1); ctx.lineTo(x0 + panelW, y0p1); ctx.stroke();
+
+        // path
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        for (let k = 0; k <= N; k++) {
+            const px = x0 + (k / N) * panelW;
+            const py = panelY + panelH - (W[k] - yWmin) / (yWmax - yWmin) * panelH;
+            if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // axis labels
+        ctx.fillStyle = '#8b949e';
+        ctx.font = '10px JetBrains Mono';
+        ctx.fillText('0', x0 + 2, panelY + panelH + 11);
+        ctx.fillText('T=' + fmt(T, 2), x0 + panelW - 38, panelY + panelH + 11);
+
+        // ---------- Panel 2: quadratic variation ----------
+        const x1 = pad * 2 + panelW;
+        const qMax = Math.max(totalQ, T) * 1.1;
+        ctx.strokeStyle = '#21262d';
+        ctx.strokeRect(x1, panelY, panelW, panelH);
+
+        // y = t line (theoretical limit)
+        ctx.strokeStyle = '#3a4252';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (let k = 0; k <= 50; k++) {
+            const tt = (k / 50) * T;
+            const px = x1 + (tt / T) * panelW;
+            const py = panelY + panelH - (tt / qMax) * panelH;
+            if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // running Q
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let k = 0; k <= N; k++) {
+            const px = x1 + (k / N) * panelW;
+            const py = panelY + panelH - (Q[k] / qMax) * panelH;
+            if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = '#8b949e';
+        ctx.fillText('Q_T = ' + fmt(totalQ, 3), x1 + 4, panelY + panelH - 4);
+        ctx.fillStyle = '#3a4252';
+        ctx.fillText('y = t', x1 + panelW - 36, panelY + 12);
+
+        // ---------- Panel 3: histogram of dW ----------
+        const x2 = pad * 3 + 2 * panelW;
+        ctx.strokeStyle = '#21262d';
+        ctx.strokeRect(x2, panelY, panelW, panelH);
+
+        const nBins = 31;
+        const hMax = Math.max(maxAbsDW, 3 * sdt);
+        const bins = new Int32Array(nBins);
+        for (let k = 0; k < N; k++) {
+            const v = dW[k];
+            let idx = Math.floor(((v + hMax) / (2 * hMax)) * nBins);
+            if (idx < 0) idx = 0; else if (idx >= nBins) idx = nBins - 1;
+            bins[idx]++;
+        }
+        let binMax = 0;
+        for (let i = 0; i < nBins; i++) if (bins[i] > binMax) binMax = bins[i];
+        if (binMax === 0) binMax = 1;
+
+        // bars
+        ctx.fillStyle = 'rgba(167,139,250,0.55)';
+        const bw = panelW / nBins;
+        for (let i = 0; i < nBins; i++) {
+            const h = (bins[i] / binMax) * (panelH - 8);
+            ctx.fillRect(x2 + i * bw + 0.5, panelY + panelH - h, bw - 1, h);
+        }
+
+        // theoretical N(0, dt) density overlaid
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        const binWidthVal = 2 * hMax / nBins;
+        const expectedPeakHeight = (N * binWidthVal) / (sdt * Math.sqrt(2 * Math.PI));
+        const scale = (panelH - 8) / Math.max(binMax, expectedPeakHeight);
+        for (let i = 0; i <= 100; i++) {
+            const v = -hMax + (2 * hMax) * (i / 100);
+            const phi = Math.exp(-(v * v) / (2 * dt)) / (sdt * Math.sqrt(2 * Math.PI));
+            const expectedCount = phi * N * binWidthVal;
+            const px = x2 + ((v + hMax) / (2 * hMax)) * panelW;
+            const py = panelY + panelH - expectedCount * scale;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = '#8b949e';
+        ctx.font = '10px JetBrains Mono';
+        ctx.fillText('-' + fmt(hMax, 3), x2 + 2, panelY + panelH + 11);
+        ctx.fillText(fmt(hMax, 3), x2 + panelW - 38, panelY + panelH + 11);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('N(0, dt)', x2 + panelW - 50, panelY + 12);
+    }
+
+    [sT, sN].forEach(el => el.addEventListener('input', draw));
+    btn.addEventListener('click', () => { regenerate(); draw(); });
+    regenerate();
+    draw();
+})();
+</script>
+</body>
+</html>
