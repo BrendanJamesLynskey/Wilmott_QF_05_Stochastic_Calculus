@@ -12,12 +12,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
     <style>
         :root {
-            --bg-primary: #0a0a0a; --bg-card: #0d1117; --bg-code: #161b22;
-            --text-primary: #e6edf3; --text-secondary: #8b949e;
-            --accent: #fbbf24; --accent-dim: #fbbf2444; --accent-glow: #fbbf2433;
-            --accent-2: #f472b6; --accent-3: #a78bfa; --accent-4: #34d399;
-            --accent-5: #60a5fa;
-            --border: #21262d;
+            --bg-primary: #eef1e8; --bg-card: #e6eadf; --bg-code: #dce1d3;
+            --text-primary: #1c292b; --text-secondary: #61695c;
+            --accent: #835a02; --accent-dim: #835a0244; --accent-glow: #835a021a;
+            --accent-2: #9c405e; --accent-3: #633d6a; --accent-4: #216749;
+            --accent-5: #2a4679;
+            --border: #cad1c0;
             --font-display: 'Space Grotesk', sans-serif;
             --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
             --font-body: 'Inter', sans-serif;
@@ -78,7 +78,7 @@
         .control-row select, .control-row input[type="number"] { background: var(--bg-code); border: 1px solid var(--border); color: var(--text-primary); border-radius: 4px; padding: 0.3rem 0.5rem; font-family: var(--font-mono); font-size: 0.8rem; }
         .control-row .val { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); min-width: 80px; text-align: right; }
         .btn { font-family: var(--font-mono); font-size: 0.8rem; padding: 0.4rem 0.9rem; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; cursor: pointer; transition: background 0.15s ease; }
-        .btn:hover { background: rgba(251,191,36,0.25); }
+        .btn:hover { background: rgba(131,90,2,0.25); }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn.secondary { background: var(--bg-code); color: var(--text-secondary); border-color: var(--border); }
         .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin-top: 0.75rem; }
@@ -99,7 +99,7 @@
         th { background: var(--bg-code); color: var(--accent); font-weight: 600; text-align: left; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border); font-family: var(--font-display); }
         td { padding: 0.5rem 0.85rem; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
         tr:last-child td { border-bottom: none; }
-        tr:nth-child(even) td { background: rgba(13, 17, 23, 0.5); }
+        tr:nth-child(even) td { background: rgba(230,234,223,0.5); }
         @media (max-width: 640px) {
             .slide { padding: 3rem 1rem; min-height: auto; }
             .slide-number { font-size: 3rem; top: 1.5rem; right: 1rem; }
@@ -493,12 +493,12 @@
         const panelY = pad + 16;
 
         // Panel titles
-        ctx.fillStyle = '#fbbf24';
+        ctx.fillStyle = '#835a02';
         ctx.font = '12px JetBrains Mono';
         ctx.fillText('Brownian path  W_t', pad + 4, pad + 12);
-        ctx.fillStyle = '#34d399';
+        ctx.fillStyle = '#216749';
         ctx.fillText('Quadratic variation', pad * 2 + panelW + 4, pad + 12);
-        ctx.fillStyle = '#a78bfa';
+        ctx.fillStyle = '#633d6a';
         ctx.fillText('Histogram of dW', pad * 3 + 2 * panelW + 4, pad + 12);
 
         // ---------- Panel 1: W_t ----------
@@ -510,16 +510,16 @@
         const yWmin = wMin - wPad, yWmax = wMax + wPad;
 
         // axes
-        ctx.strokeStyle = '#21262d';
+        ctx.strokeStyle = '#cad1c0';
         ctx.lineWidth = 1;
         ctx.strokeRect(x0, panelY, panelW, panelH);
         // y=0 line
         const y0p1 = panelY + panelH - (0 - yWmin) / (yWmax - yWmin) * panelH;
-        ctx.strokeStyle = '#3a4252';
+        ctx.strokeStyle = '#afb6a5';
         ctx.beginPath(); ctx.moveTo(x0, y0p1); ctx.lineTo(x0 + panelW, y0p1); ctx.stroke();
 
         // path
-        ctx.strokeStyle = '#fbbf24';
+        ctx.strokeStyle = '#835a02';
         ctx.lineWidth = 1.2;
         ctx.beginPath();
         for (let k = 0; k <= N; k++) {
@@ -530,7 +530,7 @@
         ctx.stroke();
 
         // axis labels
-        ctx.fillStyle = '#8b949e';
+        ctx.fillStyle = '#61695c';
         ctx.font = '10px JetBrains Mono';
         ctx.fillText('0', x0 + 2, panelY + panelH + 11);
         ctx.fillText('T=' + fmt(T, 2), x0 + panelW - 38, panelY + panelH + 11);
@@ -538,11 +538,11 @@
         // ---------- Panel 2: quadratic variation ----------
         const x1 = pad * 2 + panelW;
         const qMax = Math.max(totalQ, T) * 1.1;
-        ctx.strokeStyle = '#21262d';
+        ctx.strokeStyle = '#cad1c0';
         ctx.strokeRect(x1, panelY, panelW, panelH);
 
         // y = t line (theoretical limit)
-        ctx.strokeStyle = '#3a4252';
+        ctx.strokeStyle = '#afb6a5';
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         for (let k = 0; k <= 50; k++) {
@@ -555,7 +555,7 @@
         ctx.setLineDash([]);
 
         // running Q
-        ctx.strokeStyle = '#34d399';
+        ctx.strokeStyle = '#216749';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         for (let k = 0; k <= N; k++) {
@@ -565,14 +565,14 @@
         }
         ctx.stroke();
 
-        ctx.fillStyle = '#8b949e';
+        ctx.fillStyle = '#61695c';
         ctx.fillText('Q_T = ' + fmt(totalQ, 3), x1 + 4, panelY + panelH - 4);
-        ctx.fillStyle = '#3a4252';
+        ctx.fillStyle = '#afb6a5';
         ctx.fillText('y = t', x1 + panelW - 36, panelY + 12);
 
         // ---------- Panel 3: histogram of dW ----------
         const x2 = pad * 3 + 2 * panelW;
-        ctx.strokeStyle = '#21262d';
+        ctx.strokeStyle = '#cad1c0';
         ctx.strokeRect(x2, panelY, panelW, panelH);
 
         const nBins = 31;
@@ -589,7 +589,7 @@
         if (binMax === 0) binMax = 1;
 
         // bars
-        ctx.fillStyle = 'rgba(167,139,250,0.55)';
+        ctx.fillStyle = 'rgba(99,61,106,0.55)';
         const bw = panelW / nBins;
         for (let i = 0; i < nBins; i++) {
             const h = (bins[i] / binMax) * (panelH - 8);
@@ -597,7 +597,7 @@
         }
 
         // theoretical N(0, dt) density overlaid
-        ctx.strokeStyle = '#fbbf24';
+        ctx.strokeStyle = '#835a02';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         const binWidthVal = 2 * hMax / nBins;
@@ -613,11 +613,11 @@
         }
         ctx.stroke();
 
-        ctx.fillStyle = '#8b949e';
+        ctx.fillStyle = '#61695c';
         ctx.font = '10px JetBrains Mono';
         ctx.fillText('-' + fmt(hMax, 3), x2 + 2, panelY + panelH + 11);
         ctx.fillText(fmt(hMax, 3), x2 + panelW - 38, panelY + panelH + 11);
-        ctx.fillStyle = '#fbbf24';
+        ctx.fillStyle = '#835a02';
         ctx.fillText('N(0, dt)', x2 + panelW - 50, panelY + 12);
     }
 
